@@ -1,25 +1,50 @@
-import React, { useState } from 'react'
+import React, { Fragment, useState } from 'react'
 
 import { connect } from 'react-redux';
 
-import { addIngredient, getFood } from '../redux/actions/MainActions'; 
+import { addIngredient, fetchResults } from '../redux/actions/MainActions'; 
 
-const FormArea = ({ addIngredient, getFood }) => {
+import { TextField, Button } from '@material-ui/core';
+
+/** @jsx jsx */
+import { jsx, css } from '@emotion/core'
+ 
+
+const FormArea = ({ ingredients, addIngredient, fetchResults }) => {
     const [value, setValue] = useState("");
 
-    const handleSubmit = e => { e.preventDefault(); }
+    const handleSubmit = e => {
+        e.preventDefault();
+        console.log("Submitted.");
+    }
+
+    const handleAddIngredient = () => {
+        if (value.trim() === "") return;
+        addIngredient(value);
+        setValue("");
+    }
+
+    const handleFetchResults = () => {
+        if (ingredients.length <= 0) return;
+        else {
+            return fetchResults();
+        }
+    }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input className='input' type='text' value={value} onChange={e => setValue(e.target.value)} />
-            <button color='primary' onClick={addIngredient}>Add Ingredient</button>
-            <button color='primary' onClick={getFood}>Search</button>
-        </form>
+        <Fragment>
+            <form onSubmit={handleSubmit}>
+                <TextField type='text' variant="outlined" label="Add Ingredient 🍅" value={value} onChange={e => setValue(e.target.value)} /><br/>
+                <Button css={css`margin-top: 15px;`} variant="contained" color='primary' onClick={handleAddIngredient}>Add Ingredient</Button>
+            </form>
+            <Button css={css`margin: 10px 0;`} variant="contained" color='secondary' onClick={() => handleFetchResults()}>Search</Button>
+        </Fragment>
     )
 }
 
-const mapStateToProps = ({ loading }) => ({
+const mapStateToProps = ({ loading, ingredients }) => ({
     loading,
+    ingredients
 });
 
-export default connect(mapStateToProps, { addIngredient, getFood })(FormArea);
+export default connect(mapStateToProps, { addIngredient, fetchResults })(FormArea);

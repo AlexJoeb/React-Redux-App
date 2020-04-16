@@ -1,28 +1,21 @@
 import React from 'react';
 
-// ! Redux
-import { createStore, applyMiddleware } from 'redux';
-import { Provider } from 'react-redux';
-import logger from 'redux-logger';
-import thunk from 'redux-thunk';
-import MainReducer from './redux/reducers/MainReducer';
-
 // ! Components
 import Form from './components/Form';
+import IngredientList from './components/IngredientList';
+import Results from './components/Results';
 
-const store = createStore(
-  MainReducer,
-  applyMiddleware(thunk, logger)
-);
+import { connect } from 'react-redux';
 
-function App() {
+function App({results, loading}) {
   return (
-    <Provider store={store}>
       <div className="app">
         <Form />
+        <IngredientList />
+        {(results.length > 0 && !loading) && <Results />}
+        {loading && <h1>Loading...</h1>}
       </div>
-    </Provider>
   );
 }
 
-export default App;
+export default connect(({results, loading}) => ({results, loading}), {})(App);
